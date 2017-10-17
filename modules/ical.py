@@ -2,7 +2,9 @@ import json
 from datetime import datetime, timedelta
 import time
 from icalendar import Calendar, Event, vDatetime
-##  put ics file in main ics = "/home/dragon/USHolidays.ics"
+import sys  
+sys.path.append('..')
+import mirrorproject
 
 def getTodayEvents(ics):
     ics_file = open(ics, 'r').read()
@@ -47,8 +49,6 @@ def getTodayEvents(ics):
                 dtstart = day5
                 calendarentries.append(str(dtstart) + ' ' + summary)
     calendarentries.sort()
-#    print(calendarentries)
     for x in calendarentries:
-         print(x)
+          mirrorproject.iCALlreturn(x)
 
-getTodayEvents(ics)

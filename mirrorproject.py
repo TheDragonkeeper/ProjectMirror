@@ -29,65 +29,69 @@ currentdatel.pack(fill=BOTH, expand=0, side=LEFT, anchor='w')
 currentdatel.place(x=15,y=280)
 #calender.events
 import ical
+ics = "/home/dragon/USHolidays.ics"
 iCALl = Label(root, font=(mainfont, 16, 'bold'), bg=bgcolour, fg=fgcolour, justify=LEFT)
 iCALl.pack(fill=BOTH, expand=0, side=LEFT, anchor='w')
-iCALl.place(x=30,y=130)
 
-def powerOFFtv():
-    clock.config(text='Turning off TV')
-    call(["tvservice", "-o"])
+def iCALlreturn(x):
+	iCALl.config(text='tgrhtfrg')
+	iCALl.after(200, ical.getTodayEvents(ics))
 
-def powerONtv():
-    call(["tvservice", "-p"])
-    call(["fbset", "-depth", "16"])
-    call(["xrefresh"])
-    call(["fbset", "-depth", "32"])
-    call(["xrefresh"])
-    clock.config(text='Turning on TV')
+iCALl.place(x=200,y=200)
+if __name__ == '__main__':
 
-time1 = ''
-def tick():
-    global time1
-    # get local time
-    time2 = time.strftime('%H:%M:%S')
-    # check time string for changes
-    if time2 != time1:
-        time1 = time2
-        clock.config(text=time2)
-    # update onscreen clock every 200 ms
-    clock.after(200, tick)
-    if time2 == "00:02:00":
-        powerOFFtv()
-    if time2 == "00:04:00":
-        powerONtv()
-    if time2 == "07:20:00":
-        powerOFFtv()
-    if time2 == "18:00:00":
-        powerONtv()
+	def powerOFFtv():
+	    clock.config(text='Turning off TV')
+	    call(["tvservice", "-o"])
 
-def calenderf():
-#Create a plain text calendar
-    cal = calendar.TextCalendar(calendar.SUNDAY)
-    calyear = datetime.datetime.today().year
-    calmonth  = datetime.datetime.today().month
-    calb4 = cal.formatmonth(calyear,calmonth)
-    calb44 = calb4.replace(str(calyear), '')
-    namemonth = datetime.datetime.now().strftime("%B")
-    caldisp = str(str(calb44.replace(namemonth, '')))
-    calenderl.config(text=caldisp)
-    calenderl.after(20000, calenderf) ##change this to update when date changes
-
-def currentdatef():
-    year = datetime.datetime.today().year
-    month  = datetime.datetime.now().strftime("%B")
-    day = datetime.datetime.today().day
-    currentdatel.config(text=str(str(day) + ' ' + str(month) + ' ' + str(year)))
-    currentdatel.after(20000, currentdatef)
-
-
-ics = "/home/dragon/USHolidays.ics"
-ical.getTodayEvents(ics)
-calenderf()
-currentdatef()
-tick()
-root.mainloop()
+	def powerONtv():
+	    call(["tvservice", "-p"])
+	    call(["fbset", "-depth", "16"])
+	    call(["xrefresh"])
+	    call(["fbset", "-depth", "32"])
+	    call(["xrefresh"])
+	    clock.config(text='Turning on TV')
+	time1 = ''
+	def tick():
+	    global time1
+	    # get local time
+	    time2 = time.strftime('%H:%M:%S')
+	    # check time string for changes
+	    if time2 != time1:
+	        time1 = time2
+	        clock.config(text=time2)
+	    # update onscreen clock every 200 ms
+	    clock.after(200, tick)
+	    if time2 == "00:02:00":
+	        powerOFFtv()
+	    if time2 == "00:04:00":
+	        powerONtv()
+	    if time2 == "07:20:00":
+	        powerOFFtv()
+	    if time2 == "18:00:00":
+	        powerONtv()
+		
+	def calenderf():
+	#Create a plain text calendar
+	    cal = calendar.TextCalendar(calendar.SUNDAY)
+	    calyear = datetime.datetime.today().year
+	    calmonth  = datetime.datetime.today().month
+	    calb4 = cal.formatmonth(calyear,calmonth)
+	    calb44 = calb4.replace(str(calyear), '')
+	    namemonth = datetime.datetime.now().strftime("%B")
+	    caldisp = str(str(calb44.replace(namemonth, '')))
+	    calenderl.config(text=caldisp)
+	    calenderl.after(20000, calenderf) ##change this to update when date changes
+		
+	def currentdatef():
+	    year = datetime.datetime.today().year
+	    month  = datetime.datetime.now().strftime("%B")
+	    day = datetime.datetime.today().day
+	    currentdatel.config(text=str(str(day) + ' ' + str(month) + ' ' + str(year)))
+	    currentdatel.after(20000, currentdatef)
+	
+	ical.getTodayEvents(ics)
+	calenderf()
+	currentdatef()
+	tick()
+	root.mainloop()
