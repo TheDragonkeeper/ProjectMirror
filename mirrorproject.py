@@ -24,21 +24,39 @@ calenderl = Label(root, font=(mainfont, 16, 'bold'), bg=bgcolour, fg=fgcolour, j
 calenderl.pack(fill=BOTH, expand=0, side=LEFT, anchor='w')
 calenderl.place(x=30,y=80)
 #date
-currentdatel = Label(root,  font=(mainfont, 25, 'bold'), bg=bgcolour, fg=fgcolour, justify=LEFT)
+currentdatel = Label(root,  font=(mainfont, 18, 'bold'), bg=bgcolour, fg=fgcolour, justify=LEFT)
 currentdatel.pack(fill=BOTH, expand=0, side=LEFT, anchor='w')
 currentdatel.place(x=15,y=280)
 #calender.events
-ics = "/home/dragon/USHolidays.ics"
+ics = "/home/pi/UK_Holidays.ics"
 iCALl = Label(root, font=(mainfont, 16, 'bold'), bg=bgcolour, fg=fgcolour, justify=LEFT)
 iCALl.pack(fill=BOTH, expand=0, side=LEFT, anchor='w')
 iCALl.place(x=15,y=350)
 #forcast
 api_key = "d65a033e1b1486e87eb450cf04dbc992"
-lat = -31.967819
-lng = 115.87718
-forecastl = Label(root,  font=(mainfont, 25, 'bold'), bg=bgcolour, fg=fgcolour, justify=RIGHT)
-forecastl.pack(fill=BOTH, expand=0, side=RIGHT, anchor='e')
-forecastl.place(x=1000,y=20)
+lat = 51.3612
+lng = 1.4236
+locationx = 600
+locationy = 100
+spacing = 80
+fontsize = 16
+currenttempl = Label(root,  font=(mainfont, fontsize, 'bold'), bg=bgcolour, fg=fgcolour, justify=RIGHT)
+currenttempl.pack(fill=BOTH, expand=0, side=RIGHT, anchor='e')
+currenttempl.place(x=int(locationx),y=int(locationy))
+
+currenttempicon = PhotoImage(file="currenttemp.gif")
+currenttempicon = currenttempicon.subsample(2, 2)
+currenttempiconl = Label(image=currenttempicon)
+currenttempiconl.place(x=int(locationx - spacing),y=int(locationy))
+
+currentwindl = Label(root,  font=(mainfont, fontsize, 'bold'), bg=bgcolour, fg=fgcolour, justify=RIGHT)
+currentwindl.pack(fill=BOTH, expand=0, side=RIGHT, anchor='e')
+currentwindl.place(x=int(locationx + spacing + spacing),y=int(locationy))
+
+
+currentsummaryl = Label(root,  font=(mainfont, fontsize, 'bold'), bg=bgcolour, fg=fgcolour, justify=RIGHT)
+currentsummaryl.pack(fill=BOTH, expand=0, side=RIGHT, anchor='e')
+currentsummaryl.place(x=int(locationx),y=int(locationy + spacing))
 
 
 def powerOFFtv():
@@ -88,7 +106,8 @@ def currentdatef():
     year = datetime.today().year
     month  = datetime.now().strftime("%B")
     day = datetime.today().day
-    currentdatel.config(text=str(str(day) + ' ' + str(month) + ' ' + str(year)))
+    dayw = datetime.today().strftime('%A')
+    currentdatel.config(text=str(str(dayw) + ' ' +str(day) + ' ' + str(month) + ' ' + str(year)))
     currentdatel.after(20000, currentdatef)
 
 def getTodayEvents(ics):
@@ -139,16 +158,36 @@ def getTodayEvents(ics):
         iCALl.config(text=x)
         
 def forecast():
-	today = datetime.today().date()
-	day2 = today+timedelta(days=1)
-	day3 = today+timedelta(days=2)
-	day4 = today+timedelta(days=3)
-	day5 = today+timedelta(days=4)
-	forecast = forecastio.load_forecast(api_key, lat, lng)
-	byHour = forecast.currently()
-	print(str(byHour.temperature) + ' ' + str(byHour.icon) + ' ' + str(byHour.summary))
+	weatherday1 = forecastio.load_forecast(api_key, lat, lng, time=datetime.now())
+#	weatherday2 = forecastio.load_forecast(api_key, lat, lng, time=datetime.now()+timedelta(days=1))
+#	weatherday3 = forecastio.load_forecast(api_key, lat, lng, time=datetime.now()+timedelta(days=2))
+#	weatherday4 = forecastio.load_forecast(api_key, lat, lng, time=datetime.now()+timedelta(days=3))
+#	weatherday5 = forecastio.load_forecast(api_key, lat, lng, time=datetime.now()+timedelta(days=4))
 
-getTodayEvents(ics)
+
+	byHour = weatherday1.currently()
+	currenttempl.config(text=str(str(byHour.temperature) + str('˚'))) # current temp
+	currentwindl.config(text=str(byHour.windSpeed))
+	currentsummaryl.config(text=str(byHour.summary))
+	# + str(byHour.icon) + ' ' +  + ' ' + )  ## current weather display
+
+	byHour1 = weatherday1.hourly().data
+	print(weatherday1.hourly().summary)
+	print(weatherday1.hourly().icon)
+	daystemp = []
+	dayswind = []
+	currenthour = int(time.strftime("%H"))
+	for x in byHour1:
+		daystemp.append(x.temperature)
+		dayswind.append(x.windSpeed)
+	hourvalue = 23 - currenthour 
+	hourvalue = 24 - hourvalue
+	print(daystemp[hourvalue])
+	print(dayswind[hourvalue])
+#
+
+
+#getTodayEvents(ics)
 forecast()
 calenderf()
 currentdatef()
